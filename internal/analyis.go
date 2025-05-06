@@ -85,23 +85,6 @@ func CompareFictionVsNonFictionPrices(books []Book) (z, meanFiction, meanNonFict
 	return z, meanFiction, meanNonFiction, nFiction, nNonFiction
 }
 
-func mean(values []float64) float64 {
-	sum := 0.0
-	for _, v := range values {
-		sum += v
-	}
-	return sum / float64(len(values))
-}
-
-func stdDev(values []float64, mean float64) float64 {
-	sumSquares := 0.0
-	for _, v := range values {
-		diff := v - mean
-		sumSquares += diff * diff
-	}
-	return math.Sqrt(sumSquares / float64(len(values)))
-}
-
 func InterpretPriceZScore(z float64) string {
 	// One-tailed test at 95% confidence → z < -1.645 to be significant
 	if z < -1.645 {
