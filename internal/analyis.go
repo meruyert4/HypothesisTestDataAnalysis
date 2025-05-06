@@ -57,7 +57,10 @@ func LoadBooksFromCSV(filePath string) ([]Book, error) {
 }
 
 // Calculates mean prices and z-score to compare Fiction vs Non Fiction
-func CompareFictionVsNonFictionPrices(books []Book) (z, meanFiction, meanNonFiction float64, nFiction, nNonFiction int) {
+func CompareFictionVsNonFictionPrices(books []Book) (
+	z, meanFiction, meanNonFiction, stdFiction, stdNonFiction float64,
+	nFiction, nNonFiction int,
+) {
 	var fictionPrices, nonFictionPrices []float64
 
 	for _, b := range books {
@@ -73,22 +76,20 @@ func CompareFictionVsNonFictionPrices(books []Book) (z, meanFiction, meanNonFict
 
 	meanFiction = mean(fictionPrices)
 	meanNonFiction = mean(nonFictionPrices)
-	stdFiction := stdDev(fictionPrices, meanFiction)
-	stdNonFiction := stdDev(nonFictionPrices, meanNonFiction)
+	stdFiction = stdDev(fictionPrices, meanFiction)
+	stdNonFiction = stdDev(nonFictionPrices, meanNonFiction)
 
-	// Standard error
 	se := math.Sqrt((stdFiction*stdFiction)/float64(nFiction) + (stdNonFiction*stdNonFiction)/float64(nNonFiction))
-
-	// z = (mean1 - mean2) / SE
 	z = (meanFiction - meanNonFiction) / se
 
-	return z, meanFiction, meanNonFiction, nFiction, nNonFiction
+	return z, meanFiction, meanNonFiction, stdFiction, stdNonFiction, nFiction, nNonFiction
 }
 
 func InterpretPriceZScore(z float64) string {
 	// One-tailed test at 95% confidence → z < -1.645 to be significant
+	pValue := ZScoreToPValue(z)
 	if z < -1.645 {
-		return fmt.Sprintf("Z-score: %.2f → Reject H₀. Fiction books are significantly cheaper. ✅", z)
+		return fmt.Sprintf("Z-score: %.2f → Reject H₀. Fiction books are significantly cheaper. ✅ P-value: %.4f", z, pValue)
 	}
-	return fmt.Sprintf("Z-score: %.2f → Fail to reject H₀. No strong evidence Fiction books are cheaper. ❌", z)
+	return fmt.Sprintf("Z-score: %.2f → Fail to reject H₀. No strong evidence Fiction books are cheaper. ❌ P-value: %.9f", z, pValue)
 }

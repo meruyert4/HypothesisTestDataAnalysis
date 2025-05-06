@@ -16,7 +16,9 @@ func main() {
 		log.Fatalf("Failed to load books: %v", err)
 	}
 
-	z, meanFiction, meanNonFiction, nF, nNF := internal.CompareFictionVsNonFictionPrices(books)
+	z, meanFiction, meanNonFiction, stdF, stdNF, nF, nNF := internal.CompareFictionVsNonFictionPrices(books)
+	fmt.Printf("Fiction Standard Dev: %.2f\n", stdF)
+	fmt.Printf("Non-Fiction Standard Dev: %.2f\n", stdNF)
 
 	fmt.Printf("📚 Fiction Avg Price: $%.2f (%d books)\n", meanFiction, nF)
 	fmt.Printf("📘 Non Fiction Avg Price: $%.2f (%d books)\n", meanNonFiction, nNF)

@@ -18,3 +18,7 @@ func stdDev(values []float64, mean float64) float64 {
 	}
 	return math.Sqrt(sumSquares / float64(len(values)))
 }
+
+func ZScoreToPValue(z float64) float64 {
+	return 0.5 * (1 + math.Erf(z/math.Sqrt2))
+}
